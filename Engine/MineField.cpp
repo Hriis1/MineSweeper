@@ -35,9 +35,11 @@ void MineField::Tile::spawnMine()
 	_hasMine = true;
 }
 
-bool MineField::Tile::hasMine() const
+void MineField::Tile::reveal()
 {
-	return _hasMine;
+	assert(_state == State::Hidden);
+
+	_state = State::Revealed;
 }
 
 MineField::MineField(int nMines)
@@ -58,6 +60,15 @@ MineField::MineField(int nMines)
 		} while (tileAt(spawnPos).hasMine());
 
 		tileAt(spawnPos).spawnMine();
+	}
+
+	//reveal test
+	for (size_t i = 0; i < 120; i++)
+	{
+		const Vei2 gridPos = Vei2(xDist(rng), yDist(rng));
+
+		if(!tileAt(gridPos).isRevealed())
+			tileAt(gridPos).reveal();
 	}
 }
 

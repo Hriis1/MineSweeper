@@ -19,7 +19,10 @@ private:
 		void draw(const Vei2& screenPos, Graphics& gfx) const;
 
 		void spawnMine();
-		bool hasMine() const;
+		void reveal();
+
+		bool hasMine() const { return _hasMine; }
+		bool isRevealed() const { return _state == State::Revealed; }
 	private:
 		State _state = State::Hidden;
 		bool _hasMine = false;
