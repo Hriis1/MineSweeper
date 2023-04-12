@@ -62,14 +62,14 @@ MineField::MineField(int nMines)
 		tileAt(spawnPos).spawnMine();
 	}
 
-	//reveal test
-	for (size_t i = 0; i < 120; i++)
-	{
-		const Vei2 gridPos = Vei2(xDist(rng), yDist(rng));
+	////reveal test
+	//for (size_t i = 0; i < 120; i++)
+	//{
+	//	const Vei2 gridPos = Vei2(xDist(rng), yDist(rng));
 
-		if(!tileAt(gridPos).isRevealed())
-			tileAt(gridPos).reveal();
-	}
+	//	if(!tileAt(gridPos).isRevealed())
+	//		tileAt(gridPos).reveal();
+	//}
 }
 
 void MineField::draw(Graphics& gfx) const
@@ -83,4 +83,13 @@ void MineField::draw(Graphics& gfx) const
 		}
 		
 	}
+}
+
+void MineField::onRevealClick(const Vei2& screenPos)
+{
+	Vei2 gridPos = screenToGrid(screenPos);
+	assert(gridPos.x >= 0 && gridPos.x < _width&& gridPos.y >= 0 && gridPos.y < _height);
+
+	if(!tileAt(gridPos).isRevealed())
+		tileAt(gridPos).reveal();
 }

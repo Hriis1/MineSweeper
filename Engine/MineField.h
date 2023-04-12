@@ -31,12 +31,14 @@ public:
 	MineField(int nMines);
 
 	void draw(Graphics& gfx) const;
+	void onRevealClick(const Vei2& screenPos);
 
 	RectI getRect() const { return RectI(0, _width * SpriteCodex::tileSize, 0, _height * SpriteCodex::tileSize); }
 
 private:
 	Tile& tileAt(const Vei2& gridPos) { return _field[gridPos.y * _width + gridPos.x]; }
 	const Tile& tileAt(const Vei2& gridPos) const { return _field[gridPos.y * _width + gridPos.x]; }
+	Vei2 screenToGrid(const Vei2& screenPos) const { return screenPos / SpriteCodex::tileSize; }
 private:
 	static constexpr int _width = 20;
 	static constexpr int _height = 16;
