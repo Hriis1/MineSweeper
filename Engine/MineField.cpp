@@ -70,11 +70,22 @@ void MineField::Tile::spawnMine()
 	_hasMine = true;
 }
 
-void MineField::Tile::reveal()
+void MineField::Tile::reveal(MineField& field)
 {
 	assert(_state == State::Hidden);
 
 	_state = State::Revealed;
+
+	if (_nNeighborMines == 0)
+	{
+		std::vector<Tile*> neighborTiles = field.getNeighborTiles(_fieldPos);
+		for (size_t i = 0; i < neighborTiles.size(); i++)
+		{
+			if (neighborTiles[i]->_state == State::Hidden)
+				neighborTiles[i]->reveal(field);
+		}
+	}
+
 }
 
 void MineField::Tile::toggleFlag()
@@ -114,6 +125,11 @@ MineField::MineField(int nMines)
 			tileAt(gridPos).setNeighborMineCount(countNeighborMines(gridPos));
 		}
 	}
+
+	for (size_t i = 0; i < _width * _height; i++)
+	{
+		_field[i].setFieldPos(i);
+	}
 }
 
 void MineField::draw(Graphics& gfx) const
@@ -136,7 +152,7 @@ void MineField::onRevealClick(const Vei2& screenPos)
 		assert(gridPos.x >= 0 && gridPos.x < _width&& gridPos.y >= 0 && gridPos.y < _height);
 
 		if (!tileAt(gridPos).isRevealed() && !tileAt(gridPos).isFlagged())
-			tileAt(gridPos).reveal();
+			tileAt(gridPos).reveal(*this);
 
 		if (tileAt(gridPos).hasMine())
 			_gameLost = true;
@@ -176,4 +192,26 @@ int MineField::countNeighborMines(const Vei2& gridPos)
 	}
 
 	return count;
+}
+
+std::vector<MineField::Tile*> MineField::getNeighborTiles(int fieldPos)
+{
+	Vei2 gridPos;
+	gridPos.x = fieldPos % _width;
+	gridPos.y = fieldPos / _width;
+	std::vector<MineField::Tile*> tiles;
+	const int xStart = std::max(0, gridPos.x - 1);
+	const int xEnd = std::min(_width - 1, gridPos.x + 1);
+	const int yStart = std::max(0, gridPos.y - 1);
+	const int yEnd = std::min(_height - 1, gridPos.y + 1);
+
+	for (Vei2 gridPos(xStart, yStart); gridPos.y <= yEnd; gridPos.y++)
+	{
+		for (gridPos.x = xStart; gridPos.x <= xEnd; gridPos.x++)
+		{
+			tiles.push_back(&tileAt(gridPos));
+		}
+	}
+
+	return tiles;
 }
