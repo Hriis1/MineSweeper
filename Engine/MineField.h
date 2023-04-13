@@ -20,9 +20,11 @@ private:
 
 		void spawnMine();
 		void reveal();
+		void toggleFlag();
 
 		bool hasMine() const { return _hasMine; }
 		bool isRevealed() const { return _state == State::Revealed; }
+		bool isFlagged() const { return _state == State::Flagged; }
 	private:
 		State _state = State::Hidden;
 		bool _hasMine = false;
@@ -32,6 +34,7 @@ public:
 
 	void draw(Graphics& gfx) const;
 	void onRevealClick(const Vei2& screenPos);
+	void onFlagClick(const Vei2& screenPos);
 
 	RectI getRect() const { return RectI(0, _width * SpriteCodex::tileSize, 0, _height * SpriteCodex::tileSize); }
 

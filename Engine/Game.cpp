@@ -48,6 +48,15 @@ void Game::UpdateModel()
 			_field.onRevealClick(mousePos);
 		}
 	}
+	else if (wnd.mouse.RightIsPressed())
+	{
+		const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+
+		if (_field.getRect().Contains(mousePos))
+		{
+			_field.onFlagClick(mousePos);
+		}
+	}
 }
 
 void Game::ComposeFrame()
