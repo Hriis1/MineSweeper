@@ -44,7 +44,7 @@ void Game::UpdateModel()
 		const auto e = wnd.mouse.Read();
 		if (e.GetType() == Mouse::Event::Type::LPress)
 		{
-			const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+			const Vei2 mousePos = Vei2(e.GetPosX(), e.GetPosY());
 
 			if (_field.getRect().Contains(mousePos))
 			{
@@ -53,7 +53,7 @@ void Game::UpdateModel()
 		}
 		else if(e.GetType() == Mouse::Event::Type::RPress)
 		{
-			const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+			const Vei2 mousePos = Vei2(e.GetPosX(), e.GetPosY());
 
 			if (_field.getRect().Contains(mousePos))
 			{
