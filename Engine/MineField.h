@@ -17,7 +17,7 @@ private:
 			Hidden, Flagged, Revealed
 		};
 	public:
-		void draw(const Vei2& screenPos, Graphics& gfx) const;
+		void draw(const Vei2& screenPos,bool gameLost, Graphics& gfx) const;
 
 		void spawnMine();
 		void reveal();
@@ -52,6 +52,7 @@ private:
 	static constexpr int _width = 20;
 	static constexpr int _height = 16;
 
+	bool _gameLost = false;
 	Tile _field[_width * _height];
 };
 

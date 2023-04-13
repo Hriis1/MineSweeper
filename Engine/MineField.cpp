@@ -2,27 +2,64 @@
 #include "Vei2.h"
 
 
-void MineField::Tile::draw(const Vei2& screenPos, Graphics& gfx) const
+void MineField::Tile::draw(const Vei2& screenPos, bool gameLost, Graphics& gfx) const
 {
-	switch (_state)
+	if (!gameLost)
 	{
-	case State::Hidden:
-		SpriteCodex::DrawTileButton(screenPos, gfx);
-		break;
-	case State::Flagged:
-		SpriteCodex::DrawTileButton(screenPos, gfx);
-		SpriteCodex::DrawTileFlag(screenPos, gfx);
-		break;
-	case State::Revealed:
-		if (!hasMine())
+		switch (_state)
 		{
-			SpriteCodex::DrawTileNumber(screenPos,_nNeighborMines, gfx);
+		case State::Hidden:
+			SpriteCodex::DrawTileButton(screenPos, gfx);
+			break;
+		case State::Flagged:
+			SpriteCodex::DrawTileButton(screenPos, gfx);
+			SpriteCodex::DrawTileFlag(screenPos, gfx);
+			break;
+		case State::Revealed:
+			if (!hasMine())
+			{
+				SpriteCodex::DrawTileNumber(screenPos, _nNeighborMines, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTileBomb(screenPos, gfx);
+			}
+			break;
 		}
-		else
+	}
+	else //game is lost
+	{
+		switch (_state)
 		{
-			SpriteCodex::DrawTileBomb(screenPos, gfx);
+		case State::Hidden:
+			if(hasMine())
+				SpriteCodex::DrawTileBomb(screenPos, gfx);
+			else
+				SpriteCodex::DrawTileButton(screenPos, gfx);
+			break;
+		case State::Flagged:
+			if (hasMine())
+			{
+				SpriteCodex::DrawTileBomb(screenPos, gfx);
+				SpriteCodex::DrawTileFlag(screenPos, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTileBomb(screenPos, gfx);
+				SpriteCodex::DrawTileCross(screenPos, gfx);
+			}
+			break;
+		case State::Revealed:
+			if (!hasMine())
+			{
+				SpriteCodex::DrawTileNumber(screenPos, _nNeighborMines, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTileBombRed(screenPos, gfx);
+			}
+			break;
 		}
-		break;
 	}
 }
 
@@ -86,28 +123,37 @@ void MineField::draw(Graphics& gfx) const
 	{
 		for (gridPos.x = 0; gridPos.x < _width; gridPos.x++)
 		{
-			tileAt(gridPos).draw(gridPos * SpriteCodex::tileSize, gfx);
+			tileAt(gridPos).draw(gridPos * SpriteCodex::tileSize, _gameLost,gfx);
 		}
 	}
 }
 
 void MineField::onRevealClick(const Vei2& screenPos)
 {
-	Vei2 gridPos = screenToGrid(screenPos);
-	assert(gridPos.x >= 0 && gridPos.x < _width&& gridPos.y >= 0 && gridPos.y < _height);
+	if (!_gameLost)
+	{
+		Vei2 gridPos = screenToGrid(screenPos);
+		assert(gridPos.x >= 0 && gridPos.x < _width&& gridPos.y >= 0 && gridPos.y < _height);
 
-	if(!tileAt(gridPos).isRevealed() && !tileAt(gridPos).isFlagged())
-		tileAt(gridPos).reveal();
+		if (!tileAt(gridPos).isRevealed() && !tileAt(gridPos).isFlagged())
+			tileAt(gridPos).reveal();
+
+		if (tileAt(gridPos).hasMine())
+			_gameLost = true;
+	}
 }
 
 void MineField::onFlagClick(const Vei2& screenPos)
 {
-	Vei2 gridPos = screenToGrid(screenPos);
-	assert(gridPos.x >= 0 && gridPos.x < _width&& gridPos.y >= 0 && gridPos.y < _height);
+	if (!_gameLost)
+	{
+		Vei2 gridPos = screenToGrid(screenPos);
+		assert(gridPos.x >= 0 && gridPos.x < _width&& gridPos.y >= 0 && gridPos.y < _height);
 
-	Tile tile = tileAt(gridPos);
-	if (!tileAt(gridPos).isRevealed())
-		tileAt(gridPos).toggleFlag();
+		Tile tile = tileAt(gridPos);
+		if (!tileAt(gridPos).isRevealed())
+			tileAt(gridPos).toggleFlag();
+	}
 }
 
 int MineField::countNeighborMines(const Vei2& gridPos)
