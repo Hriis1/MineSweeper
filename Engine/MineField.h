@@ -41,20 +41,23 @@ public:
 	MineField(int nMines);
 
 	void draw(Graphics& gfx) const;
+	void centerField();
 	void onRevealClick(const Vei2& screenPos);
 	void onFlagClick(const Vei2& screenPos);
 
-	RectI getRect() const { return RectI(0, _width * SpriteCodex::tileSize, 0, _height * SpriteCodex::tileSize); }
+	//getters
+	RectI getRect() const { return RectI(_centerOffset.x, (_width * SpriteCodex::tileSize) + _centerOffset.x, _centerOffset.y, (_height * SpriteCodex::tileSize) + _centerOffset.y); }
 
 private:
 	Tile& tileAt(const Vei2& gridPos) { return _field[gridPos.y * _width + gridPos.x]; }
 	const Tile& tileAt(const Vei2& gridPos) const { return _field[gridPos.y * _width + gridPos.x]; }
-	Vei2 screenToGrid(const Vei2& screenPos) const { return screenPos / SpriteCodex::tileSize; }
+	Vei2 screenToGrid(const Vei2& screenPos) const { return (screenPos - _centerOffset) / SpriteCodex::tileSize; }
 	int countNeighborMines(const Vei2& gridPos);
 	std::vector<Tile*> getNeighborTiles(int fieldPos);
 private:
 	static constexpr int _width = 20;
 	static constexpr int _height = 16;
+	Vei2 _centerOffset{0,0};
 
 	bool _gameLost = false;
 	Tile _field[_width * _height];

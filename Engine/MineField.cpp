@@ -102,6 +102,8 @@ MineField::MineField(int nMines)
 {
 	assert(nMines > 0 && nMines < _width* _height);
 	
+	centerField();
+
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xDist(0, _width - 1);
@@ -139,9 +141,15 @@ void MineField::draw(Graphics& gfx) const
 	{
 		for (gridPos.x = 0; gridPos.x < _width; gridPos.x++)
 		{
-			tileAt(gridPos).draw(gridPos * SpriteCodex::tileSize, _gameLost,gfx);
+			tileAt(gridPos).draw((gridPos * SpriteCodex::tileSize) + _centerOffset, _gameLost,gfx);
 		}
 	}
+}
+
+void MineField::centerField()
+{
+	_centerOffset.x = (Graphics::ScreenWidth - _width * SpriteCodex::tileSize) / 2;
+	_centerOffset.y = (Graphics::ScreenHeight - _height * SpriteCodex::tileSize) / 2;
 }
 
 void MineField::onRevealClick(const Vei2& screenPos)
