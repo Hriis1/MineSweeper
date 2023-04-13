@@ -39,22 +39,26 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (wnd.mouse.LeftIsPressed())
+	while (!wnd.mouse.IsEmpty())
 	{
-		const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
-
-		if (_field.getRect().Contains(mousePos))
+		const auto e = wnd.mouse.Read();
+		if (e.GetType() == Mouse::Event::Type::LPress)
 		{
-			_field.onRevealClick(mousePos);
+			const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+
+			if (_field.getRect().Contains(mousePos))
+			{
+				_field.onRevealClick(mousePos);
+			}
 		}
-	}
-	else if (wnd.mouse.RightIsPressed())
-	{
-		const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
-
-		if (_field.getRect().Contains(mousePos))
+		else if(e.GetType() == Mouse::Event::Type::RPress)
 		{
-			_field.onFlagClick(mousePos);
+			const Vei2 mousePos = Vei2(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+
+			if (_field.getRect().Contains(mousePos))
+			{
+				_field.onFlagClick(mousePos);
+			}
 		}
 	}
 }
