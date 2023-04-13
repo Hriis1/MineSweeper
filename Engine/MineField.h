@@ -3,6 +3,7 @@
 #include "RectI.h"
 #include "SpriteCodex.h"
 
+#include <assert.h>
 #include <random>
 
 class MineField
@@ -25,9 +26,13 @@ private:
 		bool hasMine() const { return _hasMine; }
 		bool isRevealed() const { return _state == State::Revealed; }
 		bool isFlagged() const { return _state == State::Flagged; }
+
+		//setters
+		void setNeighborMineCount(int mineCount) { assert(_nNeighborMines == -1); _nNeighborMines = mineCount; }
 	private:
 		State _state = State::Hidden;
 		bool _hasMine = false;
+		int _nNeighborMines = -1;
 	};
 public:
 	MineField(int nMines);
@@ -42,6 +47,7 @@ private:
 	Tile& tileAt(const Vei2& gridPos) { return _field[gridPos.y * _width + gridPos.x]; }
 	const Tile& tileAt(const Vei2& gridPos) const { return _field[gridPos.y * _width + gridPos.x]; }
 	Vei2 screenToGrid(const Vei2& screenPos) const { return screenPos / SpriteCodex::tileSize; }
+	int countNeighborMines(const Vei2& gridPos);
 private:
 	static constexpr int _width = 20;
 	static constexpr int _height = 16;

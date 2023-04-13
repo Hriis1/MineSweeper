@@ -1,8 +1,6 @@
 #include "MineField.h"
 #include "Vei2.h"
 
-#include <assert.h>
-
 
 void MineField::Tile::draw(const Vei2& screenPos, Graphics& gfx) const
 {
@@ -18,7 +16,7 @@ void MineField::Tile::draw(const Vei2& screenPos, Graphics& gfx) const
 	case State::Revealed:
 		if (!hasMine())
 		{
-			SpriteCodex::DrawTile0(screenPos, gfx);
+			SpriteCodex::DrawTileNumber(screenPos,_nNeighborMines, gfx);
 		}
 		else
 		{
@@ -71,6 +69,14 @@ MineField::MineField(int nMines)
 
 		tileAt(spawnPos).spawnMine();
 	}
+
+	for (Vei2 gridPos(0, 0); gridPos.y < _height; gridPos.y++)
+	{
+		for (gridPos.x = 0; gridPos.x < _width; gridPos.x++)
+		{
+			tileAt(gridPos).setNeighborMineCount(countNeighborMines(gridPos));
+		}
+	}
 }
 
 void MineField::draw(Graphics& gfx) const
@@ -82,7 +88,6 @@ void MineField::draw(Graphics& gfx) const
 		{
 			tileAt(gridPos).draw(gridPos * SpriteCodex::tileSize, gfx);
 		}
-		
 	}
 }
 
@@ -103,4 +108,26 @@ void MineField::onFlagClick(const Vei2& screenPos)
 	Tile tile = tileAt(gridPos);
 	if (!tileAt(gridPos).isRevealed())
 		tileAt(gridPos).toggleFlag();
+}
+
+int MineField::countNeighborMines(const Vei2& gridPos)
+{
+	const int xStart = std::max(0, gridPos.x - 1);
+	const int xEnd = std::min(_width - 1, gridPos.x + 1);
+	const int yStart = std::max(0, gridPos.y - 1);
+	const int yEnd = std::min(_height - 1, gridPos.y + 1);
+
+	int count = 0;
+	for (Vei2 gridPos(xStart, yStart); gridPos.y <= yEnd; gridPos.y++)
+	{
+		for (gridPos.x = xStart; gridPos.x <= xEnd; gridPos.x++)
+		{
+			if (tileAt(gridPos).hasMine())
+			{
+				count++;
+			}
+		}
+	}
+
+	return count;
 }
