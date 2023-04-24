@@ -123,10 +123,10 @@ void MemeField::Tile::SetNeighborMemeCount( int memeCount )
 
 MemeField::MemeField( const Vei2& center,int nMemes, int width_, int height_)
 	:
+	width(width_), height(height_),
 	topLeft( center - Vei2( width * SpriteCodex::tileSize,height * SpriteCodex::tileSize ) / 2 )
 {
-	width = width_;
-	height = height_;
+	
 	field = new Tile[width * height];
 	assert( nMemes > 0 && nMemes < width * height );
 	std::random_device rd;
