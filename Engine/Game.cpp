@@ -71,6 +71,19 @@ void Game::UpdateModel()
 					}
 				}
 			}
+			else
+			{
+				if (e.GetType() == Mouse::Event::Type::LPress)
+				{
+					const Vei2 mousePos = e.GetPos();
+					if (!field->GetRect().Contains(mousePos))
+					{
+						delete field;
+						field = nullptr;
+						state = State::SelectionMenu;
+					}
+				}
+			}
 		}
 		else
 		{
