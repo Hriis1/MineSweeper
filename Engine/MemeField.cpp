@@ -157,7 +157,8 @@ MemeField::MemeField( const Vei2& center,int nMemes, int width_, int height_)
 
 MemeField::~MemeField()
 {
-	delete field;
+	delete[] field;
+	field = nullptr;
 }
 
 void MemeField::Draw( Graphics& gfx ) const
