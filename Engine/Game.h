@@ -36,6 +36,7 @@ private:
 	};
 public:
 	Game( class MainWindow& wnd );
+	~Game();
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete;
 	void Go();
@@ -50,7 +51,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	MemeField field;
+	MemeField* field = nullptr;
 	SelectionMenu menu;
 	State state = State::SelectionMenu;
 	/********************************/
